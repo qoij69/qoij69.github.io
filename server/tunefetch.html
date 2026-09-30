@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>TuneFetch</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{margin:0;padding:0 0 30px;font-family:Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+.hdr{padding:10px 12px}
+h1{margin:0;font-size:22px}
+.wrap{padding:0 12px 12px}
+.tabs{margin:0 12px 4px}.tabs:after{content:"";display:block;clear:both}
+.tab{float:left;width:50%;text-align:center;padding:10px 0;box-sizing:border-box;-webkit-box-sizing:border-box;cursor:pointer;font-size:15px}
+.card{margin-top:10px;padding:10px;border-radius:10px;word-wrap:break-word}
+.sec{padding:0}
+.sh{padding:11px 12px;font-size:15px;cursor:pointer}
+.sb{display:none;padding:0 12px 8px}
+textarea,select,input[type=text],input[type=number]{width:100%;box-sizing:border-box;-webkit-box-sizing:border-box;font-size:16px;padding:8px;margin:2px 0 8px;border-radius:8px}
+textarea{height:100px}
+label{font-size:13px}
+.cb{display:block;font-size:15px;padding:5px 0}
+.btn{font-size:17px;padding:10px 18px;border:0;-webkit-appearance:none;border-radius:20px}
+.btn2{font-size:14px;padding:7px 14px;margin-right:6px}
+.t{font-size:15px}.s{font-size:13px;margin-top:4px}
+.bar{height:6px;margin-top:6px;border-radius:3px;overflow:hidden}
+.fill{height:100%}
+#dot{display:inline-block;width:12px;height:12px;background:#E0A800;border-radius:6px;margin-right:6px}
+
+/* ===== Material (default) ===== */
+.t-md{background:#141218;color:#E6E0E9}
+.t-md h1{color:#D0BCFF}
+.t-md .tab{color:#CAC4D0;border-bottom:3px solid transparent}
+.t-md .tab.on{color:#D0BCFF;border-bottom-color:#D0BCFF}
+.t-md .card{background:#211F26}
+.t-md .sh,.t-md a{color:#D0BCFF}
+.t-md label,.t-md .s{color:#CAC4D0}
+.t-md .cb{color:#E6E0E9}
+.t-md textarea,.t-md select,.t-md input[type=text],.t-md input[type=number]{border:1px solid #49454F;background:#141218;color:#E6E0E9}
+.t-md .btn{background:#D0BCFF;color:#381E72}
+.t-md .btn2{background:#49454F;color:#E6E0E9}
+.t-md .bar{background:#49454F}.t-md .fill{background:#D0BCFF}
+.t-md .err{color:#F2B8B5}
+
+/* ===== iOS 6 (legacy, skeuomorphic) ===== */
+.t-ios6{background:#c5ccd4;background:-webkit-repeating-linear-gradient(left,#c5ccd4 0,#c5ccd4 2px,#cbd2d8 2px,#cbd2d8 4px);color:#000;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif}
+.t-ios6 .hdr{text-align:center;padding:0;height:44px;line-height:44px;background:#6d84a3;background:-webkit-linear-gradient(top,#a8b7cd 0%,#8198b8 48%,#6d86ab 52%,#5d7aa4 100%);border-bottom:1px solid #2d3d54;box-shadow:0 1px 2px rgba(0,0,0,.45)}
+.t-ios6 h1{font-size:20px;color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.6)}
+.t-ios6 .tabs{margin-top:10px;border:1px solid #4a5f80;border-radius:7px;overflow:hidden;box-shadow:0 1px 0 rgba(255,255,255,.7)}
+.t-ios6 .tab{font-weight:bold;color:#444;text-shadow:0 1px 0 #fff;background:#e9e9e9;background:-webkit-linear-gradient(top,#fdfdfd 0%,#e4e4e4 50%,#d0d0d0 100%);border-right:1px solid #8a93a3}
+.t-ios6 .tab.on{color:#fff;text-shadow:0 -1px 0 rgba(0,0,0,.5);background:#3d73d0;background:-webkit-linear-gradient(top,#6e9bdf 0%,#3d73d0 50%,#2a5fc2 50%,#2b66cf 100%);box-shadow:inset 0 2px 4px rgba(0,0,0,.35)}
+.t-ios6 .card{background:#fff;border:1px solid #a9adb3;border-radius:9px;box-shadow:0 1px 0 rgba(255,255,255,.8)}
+.t-ios6 .sh{color:#385487;font-weight:bold}
+.t-ios6 a{color:#2a5fc2}
+.t-ios6 label{color:#4c566c;font-weight:bold}.t-ios6 .s{color:#6d6d72}
+.t-ios6 textarea,.t-ios6 select,.t-ios6 input[type=text],.t-ios6 input[type=number]{border:1px solid #9b9b9b;background:#fff;color:#000;border-radius:6px;box-shadow:inset 0 1px 3px rgba(0,0,0,.3)}
+.t-ios6 .btn{border:1px solid #1f3f86;border-radius:9px;color:#fff;font-weight:bold;text-shadow:0 -1px 0 rgba(0,0,0,.5);background:#3d73d0;background:-webkit-linear-gradient(top,#7aa6e8 0%,#3d73d0 50%,#2a5fc2 50%,#2b66cf 100%);box-shadow:0 1px 0 rgba(255,255,255,.7),inset 0 1px 0 rgba(255,255,255,.4)}
+.t-ios6 .btn2{border:1px solid #8b8b8b;color:#333;text-shadow:0 1px 0 #fff;background:#e4e4e4;background:-webkit-linear-gradient(top,#fdfdfd 0%,#e0e0e0 50%,#cfcfcf 100%);box-shadow:0 1px 0 rgba(255,255,255,.7)}
+.t-ios6 .bar{height:10px;background:#d8d8d8;border:1px solid #8e8e8e;border-radius:6px;box-shadow:inset 0 1px 3px rgba(0,0,0,.35)}
+.t-ios6 .fill{background:#3d73d0;background:-webkit-linear-gradient(top,#8ab4f0 0%,#3d73d0 50%,#2a5fc2 50%,#4a82e0 100%)}
+.t-ios6 .err{color:#c00}
+
+/* ===== Android Holo (dark) ===== */
+.t-holo{background:#000;color:#fff;font-family:Roboto,"Droid Sans","Helvetica Neue",Arial,sans-serif}
+.t-holo .hdr{background:#111;padding:14px 12px}
+.t-holo h1{font-size:20px;font-weight:normal;color:#fff}
+.t-holo .tabs{margin:0;background:#111;border-bottom:1px solid #333}
+.t-holo .tab{text-transform:uppercase;font-size:13px;font-weight:bold;color:#999;border-bottom:3px solid transparent}
+.t-holo .tab.on{color:#33b5e5;border-bottom-color:#33b5e5}
+.t-holo .wrap{padding-top:2px}
+.t-holo .card{background:#151515;border:1px solid #2a2a2a;border-radius:2px}
+.t-holo .sh{color:#33b5e5;text-transform:uppercase;font-size:13px;font-weight:bold;border-bottom:1px solid #33b5e5}
+.t-holo a{color:#33b5e5}
+.t-holo label{color:#33b5e5;font-size:12px;text-transform:uppercase}
+.t-holo .cb{color:#fff;text-transform:none;font-size:15px}
+.t-holo .s{color:#999}
+.t-holo textarea,.t-holo select,.t-holo input[type=text],.t-holo input[type=number]{background:#000;color:#fff;border:0;border-bottom:2px solid #33b5e5;border-radius:0}
+.t-holo .btn{background:#0099cc;color:#fff;border-radius:2px;text-transform:uppercase;font-size:14px;font-weight:bold;border-bottom:2px solid #33b5e5}
+.t-holo .btn2{background:#404040;border-bottom:2px solid #555;font-size:13px}
+.t-holo .bar{height:4px;background:#333;border-radius:0}.t-holo .fill{background:#33b5e5}
+.t-holo .err{color:#ff4444}
+
+/* ===== iOS (modern) ===== */
+.t-ios{background:#F2F2F7;color:#000;font-family:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif}
+.t-ios .hdr{padding:18px 16px 6px}
+.t-ios h1{font-size:34px;font-weight:bold;color:#000}
+.t-ios .tabs{background:#E3E3E8;border-radius:9px;padding:2px}
+.t-ios .tab{border-radius:7px;color:#000;font-weight:500;padding:7px 0}
+.t-ios .tab.on{background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.18)}
+.t-ios .card{background:#fff;border-radius:12px}
+.t-ios .sh,.t-ios a{color:#007AFF}
+.t-ios label{color:#6d6d72}.t-ios .s{color:#8E8E93}
+.t-ios textarea,.t-ios select,.t-ios input[type=text],.t-ios input[type=number]{background:#F2F2F7;color:#000;border:0;border-radius:10px}
+.t-ios .btn{background:#007AFF;color:#fff;font-weight:600;border-radius:12px}
+.t-ios .btn2{background:#E9E9EB;color:#007AFF;border-radius:10px}
+.t-ios .bar{background:#E5E5EA}.t-ios .fill{background:#007AFF}
+.t-ios .err{color:#FF3B30}
+</style>
+</head>
+<body class="t-md">
+<script>(function(){try{var o=JSON.parse(localStorage.getItem("tf_settings")||"null");if(o&&/^(md|ios6|holo|ios)$/.test(o.theme))document.body.className="t-"+o.theme;}catch(e){}})();</script>
+<div class="hdr"><h1>TuneFetch</h1></div>
+<div class="tabs"><div class="tab on" id="tab_d" onclick="showTab('d')">Download</div><div class="tab" id="tab_s" onclick="showTab('s')">Settings</div></div>
+<div id="pg_d" class="wrap">
+<div id="stbox" class="card">
+<div><span id="dot"></span><b id="sttxt">Backend: checking...</b></div>
+<div class="s" id="stinfo"></div>
+<div style="margin-top:8px"><input type="button" class="btn btn2" value="Check backend" onclick="ping(true)"></div>
+</div>
+
+<form method="post" action="/api/add" id="f" onsubmit="saveOpts()">
+<textarea name="url" placeholder="Paste playlist / video links, or song names (one per line)"></textarea>
+
+<div class="sec card"><div class="sh" onclick="tg('s1')">&#9656; Format &amp; quality</div><div class="sb" id="s1" style="display:block">
+<label>Format</label>
+<select name="fmt">
+<optgroup label="Audio">
+<option value="mp3">MP3</option><option value="m4a">M4A (AAC)</option><option value="opus">Opus</option>
+<option value="flac">FLAC (lossless)</option><option value="ogg">OGG Vorbis</option><option value="wav">WAV</option>
+<option value="aac">AAC</option><option value="best">Original audio (no conversion)</option></optgroup>
+<optgroup label="Video"><option value="mp4">MP4</option><option value="mkv">MKV</option><option value="webm">WebM</option></optgroup>
+</select>
+<label>Audio quality (lossy audio formats)</label>
+<select name="aq"><option value="best">Best</option><option value="320">320 kbps</option><option value="256">256 kbps</option><option value="192">192 kbps</option><option value="128">128 kbps</option><option value="96">96 kbps</option></select>
+<label>Max video resolution (video formats)</label>
+<select name="res"><option value="">Best available</option><option value="2160">2160p (4K)</option><option value="1440">1440p</option><option value="1080">1080p</option><option value="720">720p</option><option value="480">480p</option><option value="360">360p</option><option value="240">240p</option></select>
+</div></div>
+
+<div class="sec card"><div class="sh" onclick="tg('s2')">&#9656; Playlist</div><div class="sb" id="s2">
+<label>Links that contain a playlist</label>
+<select name="pl"><option value="all">Download the whole playlist</option><option value="single">Only the single video</option></select>
+<label>From item # (optional)</label><input type="number" name="pstart" placeholder="e.g. 1">
+<label>To item # (optional)</label><input type="number" name="pend" placeholder="e.g. 25">
+<label class="cb"><input type="checkbox" name="plfolder" value="1" checked> Put playlists in their own folder</label>
+<label class="cb"><input type="checkbox" name="plnum" value="1"> Number files by playlist position</label>
+<label class="cb"><input type="checkbox" name="archive" value="1"> Skip songs already downloaded before</label>
+</div></div>
+
+<div class="sec card"><div class="sh" onclick="tg('s3')">&#9656; Tags &amp; cover art</div><div class="sb" id="s3">
+<label class="cb"><input type="checkbox" name="meta" value="1" checked> Write title / artist tags</label>
+<label class="cb"><input type="checkbox" name="cover" value="1" checked> Embed cover art</label>
+<label class="cb"><input type="checkbox" name="keepcover" value="1"> Also keep the cover image as a file</label>
+</div></div>
+
+<div class="sec card"><div class="sh" onclick="tg('s4')">&#9656; File names &amp; folder</div><div class="sb" id="s4">
+<label>File name style</label>
+<select name="name"><option value="title">Title</option><option value="artist">Artist - Title</option><option value="uploader">Channel - Title</option><option value="id">Title [video id]</option></select>
+<label>Extra sub-folder (optional)</label><input type="text" name="folder" placeholder="e.g. Road trip">
+</div></div>
+
+<div class="sec card"><div class="sh" onclick="tg('s5')">&#9656; Subtitles</div><div class="sb" id="s5">
+<label>Subtitles</label>
+<select name="subs"><option value="off">Off</option><option value="manual">Real subtitles only</option><option value="auto">Real + auto-generated</option></select>
+<label>Languages (comma separated)</label><input type="text" name="sublang" value="en">
+<label class="cb"><input type="checkbox" name="embedsubs" value="1"> Embed into the video file</label>
+</div></div>
+
+<div class="sec card"><div class="sh" onclick="tg('s6')">&#9656; SponsorBlock</div><div class="sb" id="s6">
+<label class="cb"><input type="checkbox" name="sb" value="1"> Cut sponsor, self-promo, intro/outro and off-topic music segments</label>
+</div></div>
+
+<div class="sec card"><div class="sh" onclick="tg('s7')">&#9656; Speed, network &amp; login</div><div class="sb" id="s7">
+<label>Speed limit in MB/s (0 = unlimited)</label><input type="number" name="limit" value="0">
+<label>Parallel fragments per download</label>
+<select name="frag"><option value="1">1</option><option value="2">2</option><option value="4" selected>4</option><option value="8">8</option><option value="16">16</option></select>
+<label>Proxy (optional)</label><input type="text" name="proxy" placeholder="http://host:port">
+<label>Use cookies from browser on the PC (age-restricted / members videos)</label>
+<select name="browser"><option value="none">None</option><option value="chrome">Chrome</option><option value="firefox">Firefox</option><option value="edge">Edge</option><option value="brave">Brave</option><option value="opera">Opera</option><option value="vivaldi">Vivaldi</option><option value="safari">Safari</option></select>
+</div></div>
+
+<div style="margin-top:12px">
+<input type="submit" class="btn" value="Download on PC">
+</div>
+</form>
+
+<div style="margin-top:14px">
+<input type="button" class="btn btn2" value="Cancel all" onclick="act('cancel','all')">
+<input type="button" class="btn btn2" value="Clear finished" onclick="act('clear','')">
+</div>
+<div id="q"></div>
+</div>
+
+<div id="pg_s" class="wrap" style="display:none">
+<div class="card"><label>Theme</label>
+<select id="themeSel" onchange="previewTheme()">
+<option value="md">Material dark (default)</option>
+<option value="ios6">iOS 6 (legacy)</option>
+<option value="holo">Android Holo</option>
+<option value="ios">iOS (modern)</option>
+</select>
+<div class="s" id="themeDesc"></div></div>
+<div class="card"><label>Refresh speed</label>
+<select id="refSel"><option value="1000">Fast (every 1 s)</option><option value="2000">Normal (every 2 s)</option><option value="5000">Battery saver (every 5 s)</option></select></div>
+<div class="card"><label>Download options</label>
+<div class="s" style="margin-bottom:8px">Your choices on the Download tab are remembered on this device.</div>
+<input type="button" class="btn btn2" value="Reset download options" onclick="resetOpts()"></div>
+<div style="margin-top:14px"><input type="button" class="btn" value="Save changes" onclick="saveSettings()"> <span class="s" id="saved"></span></div>
+</div>
+
+<script>
+function $(i){return document.getElementById(i);}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function tg(i){var e=$(i);e.style.display=(e.style.display=="block")?"none":"block";}
+
+function saveOpts(){
+  try{
+    var o={},els=$("f").elements,i,e;
+    for(i=0;i<els.length;i++){e=els[i];if(!e.name||e.name=="url"||e.type=="submit"||e.type=="button")continue;
+      o[e.name]=(e.type=="checkbox")?e.checked:e.value;}
+    localStorage.setItem("tf_opts",JSON.stringify(o));
+  }catch(x){}
+}
+function loadOpts(){
+  try{
+    var o=JSON.parse(localStorage.getItem("tf_opts")||"null"),els=$("f").elements,i,e;
+    if(!o)return;
+    for(i=0;i<els.length;i++){e=els[i];if(!e.name||!(e.name in o))continue;
+      if(e.type=="checkbox")e.checked=o[e.name];else e.value=o[e.name];}
+  }catch(x){}
+}
+function resetOpts(){try{localStorage.removeItem("tf_opts");}catch(x){}location.reload();}
+
+var online=false;
+function setStatus(ok,txt,info){
+  online=ok;
+  $("dot").style.background=ok?"#4CAF50":"#E5484D";
+  $("sttxt").innerHTML=esc(txt);
+  $("stinfo").innerHTML=esc(info||"");
+}
+function ping(manual){
+  var x=new XMLHttpRequest(),t0=new Date().getTime(),done=false;
+  if(manual){$("dot").style.background="#E0A800";$("sttxt").innerHTML="Backend: checking...";}
+  var to=setTimeout(function(){if(!done){done=true;try{x.abort();}catch(e){}
+    setStatus(false,"Backend: OFFLINE","No answer from the PC. Is TuneFetch Host started, and are you on the same Wi-Fi?");}},4000);
+  x.open("GET","/api/ping?t="+t0,true);
+  x.onreadystatechange=function(){
+    if(x.readyState!=4||done)return;
+    done=true;clearTimeout(to);
+    if(x.status==200){
+      try{
+        var d=JSON.parse(x.responseText),ms=new Date().getTime()-t0;
+        setStatus(true,"Backend: ONLINE ("+ms+" ms)",
+          "yt-dlp "+(d.yt_dlp||"installing...")+" | ffmpeg "+(d.ffmpeg===null?"checking...":(d.ffmpeg?"ready":"MISSING"))+
+          " | "+d.active+" active, "+d.queued+" queued | saving to "+d.out);
+      }catch(e){setStatus(false,"Backend: ERROR","Unexpected reply from the server.");}
+    }else{setStatus(false,"Backend: OFFLINE","Could not reach the PC (status "+x.status+").");}
+  };
+  try{x.send(null);}catch(e){}
+}
+
+function act(kind,id){
+  var x=new XMLHttpRequest();
+  x.open("POST","/api/"+kind,true);
+  x.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+  x.onreadystatechange=function(){if(x.readyState==4){getJobs();}};
+  x.send("id="+encodeURIComponent(id));
+}
+function render(list){
+  var h="",i,j,k,run;
+  for(i=list.length-1;i>=0;i--){
+    j=list[i];run=(j.status=="Downloading"||j.status=="Converting");
+    h+='<div class="job card"><div class="t">'+esc(j.title)+'</div><div class="s">'+esc(j.fmt.toUpperCase())+' &middot; '+esc(j.status);
+    if(run){h+=' '+j.pct+'% '+esc(j.speed);}
+    h+='</div>';
+    if(run){h+='<div class="bar"><div class="fill" style="width:'+j.pct+'%"></div></div>';}
+    if(j.err){h+='<div class="s err">'+esc(j.err)+'</div>';}
+    for(k=0;k<j.files.length;k++){h+='<div class="s"><a href="/dl?job='+j.id+'&amp;i='+k+'">'+esc(j.files[k])+'</a></div>';}
+    if(run||j.status=="Queued"||j.status=="Starting"){h+='<div class="s"><a href="#" onclick="act(\'cancel\','+j.id+');return false;">Cancel</a></div>';}
+    if(j.status=="Failed"||j.status=="Canceled"){h+='<div class="s"><a href="#" onclick="act(\'retry\','+j.id+');return false;">Retry</a></div>';}
+    h+='</div>';
+  }
+  $("q").innerHTML=h;
+}
+function getJobs(){
+  var x=new XMLHttpRequest();
+  x.open("GET","/api/jobs?t="+new Date().getTime(),true);
+  x.onreadystatechange=function(){
+    if(x.readyState==4&&x.status==200){try{render(JSON.parse(x.responseText));}catch(e){}}
+  };
+  x.send(null);
+}
+var S={theme:"md",ref:2000};
+var DESC={md:"Dark purple Material look.",ios6:"Linen, glossy blue bars and bevelled buttons like iOS 6.",holo:"Black with holo-blue accents like Android 4.x.",ios:"Clean light look like current iOS."};
+function applyTheme(t){if(!DESC[t])t="md";document.body.className="t-"+t;$("themeDesc").innerHTML=DESC[t];}
+function previewTheme(){applyTheme($("themeSel").value);$("saved").innerHTML="Not saved yet - tap Save changes";}
+function saveSettings(){
+  S.theme=$("themeSel").value;S.ref=parseInt($("refSel").value,10)||2000;
+  applyTheme(S.theme);
+  try{localStorage.setItem("tf_settings",JSON.stringify(S));$("saved").innerHTML="Saved";}
+  catch(e){$("saved").innerHTML="Could not save (private browsing?)";}
+}
+function showTab(t){
+  $("pg_d").style.display=(t=="d")?"block":"none";$("pg_s").style.display=(t=="s")?"block":"none";
+  $("tab_d").className=(t=="d")?"tab on":"tab";$("tab_s").className=(t=="s")?"tab on":"tab";
+}
+function loadSettings(){
+  try{var o=JSON.parse(localStorage.getItem("tf_settings")||"null");if(o){if(o.theme)S.theme=o.theme;if(o.ref)S.ref=o.ref;}}catch(e){}
+  $("themeSel").value=DESC[S.theme]?S.theme:"md";$("refSel").value=String(S.ref);applyTheme(S.theme);
+}
+function loopJobs(){getJobs();setTimeout(loopJobs,S.ref);}
+function loopPing(){setTimeout(function(){ping(false);loopPing();},5000);}
+loadSettings();loadOpts();
+ping(false);loopJobs();loopPing();
+</script>
+</body>
+</html>
