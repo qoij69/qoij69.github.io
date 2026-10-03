@@ -1,16 +1,16 @@
 Package: com.qoij.tunefetch
 Name: TuneFetch
 Depends: preferenceloader, firmware (>= 6.0)
-Description: Downloads new music from your TuneFetch Host PC in the background
+Description: TuneFetch app: queue downloads on your PC and receive the songs on this iPhone
 Maintainer: qoij
 Author: qoij
 Section: Tweaks
 Architecture: iphoneos-arm
-Version: 0.2.0-1+debug
-Installed-Size: 156
-Filename: debs/com.qoij.tunefetch_0.2.0-1+debug_iphoneos-arm.deb
-Size: 17522
-MD5sum: 52cd4d8c2ae4fd02f66061b8c6a4fbd7
-SHA1: 2aa6c15b28fa68cbd508131f5b982f2b8f93f745
-SHA256: 01982f1ed2450d0d09981060a5cff758b6d6c37607d0cc1962fdd1e1094f4fa9
+Version: 0.3.1-1+debug
+Installed-Size: 328
+Filename: debs/com.qoij.tunefetch_0.3.1-1+debug_iphoneos-arm.deb
+Size: 67964
+MD5sum: 551a5e342d9309f5f94e6c4c40bf8ba5
+SHA1: a7629a7fc6fb8865eaf098142b88052a94a2de02
+SHA256: 2d85a38f6871fad96def081effaeaeabadc25a10cf3c438f0c8607efc3a40eba
 Depiction: https://qoij69.github.io/depictions/com.qoij.tunefetch.html

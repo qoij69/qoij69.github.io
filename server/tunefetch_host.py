@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """TuneFetch Host - run this on the PC. Press Start, then open the shown address on your phone.
 Keep tunefetch.html in the same folder. Needs Python 3.9+ (Linux: also python3-tk)."""
-import os, re, sys, json, time, socket, shutil, zipfile, tempfile, queue, threading, subprocess, importlib, importlib.util, mimetypes, webbrowser
+import os, re, sys, json, time, socket, http.client, shutil, zipfile, tempfile, queue, threading, subprocess, importlib, importlib.util, mimetypes, webbrowser
 from pathlib import Path
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import parse_qs, urlparse, quote
@@ -19,6 +19,9 @@ VIDEO = ("mp4", "mkv", "webm")
 NAMES = {"title": "%(title)s", "artist": "%(artist,uploader)s - %(title)s", "uploader": "%(uploader)s - %(title)s",
          "id": "%(title)s [%(id)s]"}
 STATE = {"ytdlp": None}
+PLAYABLE = (".mp3", ".m4a", ".aac", ".wav", ".mp4", ".m4v")
+devices, dlock, pkick = {}, threading.Lock(), threading.Event()
+PUSHED = HERE / ".tunefetch-pushed.json"
 
 
 def glog(msg):
@@ -187,6 +190,8 @@ def run(job):
     except Exception as e:
         job["status"], job["err"] = ("Canceled", "") if job["cancel"] else ("Failed", str(e)[:200])
     glog("%s: %s %s" % (job["status"], job["title"], job["err"]))
+    if job["status"] == "Done":
+        pkick.set()
 
 
 def worker():
@@ -219,6 +224,87 @@ def library():
             if f.lower().endswith(MEDIA) and time.time() - os.path.getmtime(fp) > 10:
                 res.append({"path": os.path.relpath(fp, out).replace(os.sep, "/"), "size": os.path.getsize(fp)})
     return res
+
+
+# ---- push to the iPhone: the phone registers itself (POST /api/device), the host sends new files to it ----
+def _load_pushed():
+    try:
+        return json.loads(PUSHED.read_text())
+    except Exception:
+        return {}
+
+
+pushed = _load_pushed()
+
+
+def _save_pushed():
+    try:
+        PUSHED.write_text(json.dumps(pushed))
+    except OSError:
+        pass
+
+
+def todo_for(ip, playable):
+    done = set(pushed.get(ip, []))
+    return [f for f in library()
+            if (not playable or f["path"].lower().endswith(PLAYABLE)) and "%s|%d" % (f["path"], f["size"]) not in done]
+
+
+def register_device(ip, port, playable):
+    with dlock:
+        d = devices.setdefault(ip, {"pending": 0, "sent": 0, "status": "Waiting"})
+        d.update(port=port, playable=playable, seen=time.time())
+    pkick.set()
+    return len(todo_for(ip, playable))
+
+
+def push_file(ip, port, f):
+    full = cfg["out"] / f["path"]
+    size = os.path.getsize(full)
+    conn = http.client.HTTPConnection(ip, port, timeout=30)
+    try:
+        conn.putrequest("PUT", "/put/" + quote(f["path"]))
+        conn.putheader("Content-Length", str(size))
+        conn.endheaders()
+        with open(full, "rb") as fh:
+            while True:
+                chunk = fh.read(65536)
+                if not chunk:
+                    break
+                conn.send(chunk)
+        r = conn.getresponse()
+        r.read()
+        if r.status != 200:
+            raise RuntimeError("phone answered %d" % r.status)
+    finally:
+        conn.close()
+
+
+def pusher():
+    while True:
+        pkick.wait(20)
+        pkick.clear()
+        with dlock:
+            items = [(ip, dict(d)) for ip, d in devices.items() if time.time() - d["seen"] < 900]
+        for ip, d in items:
+            try:
+                todo = todo_for(ip, d.get("playable", True))
+                with dlock:
+                    devices[ip].update(pending=len(todo), status="Sending" if todo else "Up to date")
+                for f in todo:
+                    push_file(ip, d["port"], f)
+                    pushed.setdefault(ip, []).append("%s|%d" % (f["path"], f["size"]))
+                    _save_pushed()
+                    with dlock:
+                        devices[ip]["sent"] += 1
+                        devices[ip]["pending"] = max(0, devices[ip]["pending"] - 1)
+                    glog("sent to phone: " + f["path"])
+                with dlock:
+                    devices[ip]["status"] = "Up to date"
+            except Exception as e:
+                with dlock:
+                    devices[ip]["status"] = "Error: %s" % str(e)[:80]
+                glog("push to %s failed: %s" % (ip, e))
 
 
 def job_action(kind, jid):
@@ -292,6 +378,9 @@ class H(BaseHTTPRequestHandler):
                     qd = sum(j["status"] == "Queued" for j in jobs)
                 info = {"ok": True, "yt_dlp": STATE["ytdlp"], "ffmpeg": (_ff[0] is not None) if _ff else None,
                         "active": act, "queued": qd, "out": str(cfg["out"])}
+                with dlock:
+                    info["devices"] = [{"ip": ip, "status": d["status"], "pending": d["pending"], "sent": d["sent"],
+                                        "ago": int(time.time() - d["seen"])} for ip, d in devices.items()]
                 return self.reply(200, json.dumps(info).encode(), "application/json")
             if u.path == "/api/jobs":
                 return self.reply(200, json.dumps(snapshot()).encode(), "application/json")
@@ -328,6 +417,15 @@ class H(BaseHTTPRequestHandler):
     def do_POST(self):
         n = min(int(self.headers.get("Content-Length") or 0), 1 << 20)
         d = parse_qs(self.rfile.read(n).decode("utf-8", "replace"))
+        if self.path == "/api/device":
+            try:
+                port = int(d.get("port", ["8081"])[0])
+                if not 0 < port < 65536:
+                    raise ValueError
+            except ValueError:
+                return self.reply(400, b'{"ok": false}', "application/json")
+            pending = register_device(self.client_address[0], port, d.get("playable", ["1"])[0] == "1")
+            return self.reply(200, json.dumps({"ok": True, "pending": pending}).encode(), "application/json")
         if self.path == "/api/add":
             add_jobs(d.get("url", [""])[0], {k: v[0] for k, v in d.items() if k != "url"})
         elif self.path in ("/api/cancel", "/api/retry"):
@@ -337,6 +435,8 @@ class H(BaseHTTPRequestHandler):
                 for j in jobs:
                     if j["status"] in ("Done", "Failed"):
                         j["hidden"] = True
+        if self.headers.get("X-TF-App"):
+            return self.reply(200, b'{"ok": true}', "application/json")
         self.reply(303, extra={"Location": "/tunefetch.html"})
 
 
@@ -380,6 +480,7 @@ class GUI:
         self.logbox.pack(fill="x", padx=10, pady=(0, 10))
         r.protocol("WM_DELETE_WINDOW", r.destroy)
         threading.Thread(target=worker, daemon=True).start()
+        threading.Thread(target=pusher, daemon=True).start()
         self.tick()
 
     def browse(self):
