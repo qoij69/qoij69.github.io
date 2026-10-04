@@ -1,16 +1,44 @@
 Package: com.qoij.tunefetch
 Name: TuneFetch
 Depends: preferenceloader, firmware (>= 6.0)
-Description: TuneFetch app: queue downloads on your PC and receive the songs on this iPhone
+Description: Download music on your PC, receive it on this iPhone
+ TuneFetch turns your iPhone into a remote
+ control for a download program on your PC.
+ Paste YouTube links or type song names in
+ the TuneFetch app. Your PC downloads them
+ with yt-dlp and sends the finished files
+ to a folder on this iPhone over Wi-Fi.
+ .
+ Features:
+  * MP3, M4A, AAC, WAV and MP4 video
+  * FLAC, Opus, OGG, MKV, WebM (optional)
+  * Queue with progress, cancel and retry
+  * Cover art and playlists
+  * Files go to /var/mobile/Media/music
+ .
+ How to set it up:
+  1. Run TuneFetch Host on your PC
+  2. Press "QR code" in the host window
+  3. Open the TuneFetch app, Settings,
+     tap "Scan QR code from the host"
+  4. Tap Test connection
+ (or type the PC's IP address and the
+ access code yourself)
+ .
+ Needs a PC with Python 3.9+ on the same
+ Wi-Fi. Songs do not appear in the Music
+ app; open them with a file manager or a
+ player that reads folders.
 Maintainer: qoij
 Author: qoij
-Section: Tweaks
+Section: Multimedia
+Icon: file:///Applications/TuneFetch.app/Icon.png
 Architecture: iphoneos-arm
-Version: 0.3.1-1+debug
-Installed-Size: 328
-Filename: debs/com.qoij.tunefetch_0.3.1-1+debug_iphoneos-arm.deb
-Size: 67964
-MD5sum: 551a5e342d9309f5f94e6c4c40bf8ba5
-SHA1: a7629a7fc6fb8865eaf098142b88052a94a2de02
-SHA256: 2d85a38f6871fad96def081effaeaeabadc25a10cf3c438f0c8607efc3a40eba
+Version: 0.3.6
+Installed-Size: 324
+Filename: debs/com.qoij.tunefetch_0.3.6_iphoneos-arm.deb
+Size: 83466
+MD5sum: 8a7568ca4a3f5e91db8d7daba5afebf2
+SHA1: 56a897b52b99e2c3edf62fe2e55c0ad709d614e4
+SHA256: 35902edef51ea8c18071627b7bfed2fe22e4904cc4e755d492df0dc617cb045d
 Depiction: https://qoij69.github.io/depictions/com.qoij.tunefetch.html
