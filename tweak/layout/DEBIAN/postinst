@@ -1,0 +1,23 @@
+#!/bin/sh
+PLIST=/Library/LaunchDaemons/com.qoij.tunefetchd.plist
+PIDF=/var/mobile/Library/Caches/com.qoij.tunefetchd.pid
+mkdir -p /var/mobile/Media/music
+chown mobile:mobile /var/mobile/Media/music
+chown root:wheel "$PLIST"
+chmod 644 "$PLIST"
+# stop the old daemon, whether launchd or a hand-started copy runs it
+launchctl unload "$PLIST" >/dev/null 2>&1
+[ -f "$PIDF" ] && kill `cat "$PIDF"` >/dev/null 2>&1
+rm -f "$PIDF"
+sleep 1
+launchctl load -w "$PLIST" >/dev/null 2>&1
+sleep 3
+# launchctl cannot reach launchd when installed over SSH (iOS 6): start it directly.
+# launchd starts it by itself at the next boot because the plist is installed.
+if [ ! -f "$PIDF" ]; then
+    ( trap '' HUP; su mobile -c /usr/bin/tunefetchd >/dev/null 2>&1 & )
+fi
+# make the TuneFetch icon appear on the home screen
+su mobile -c uicache >/dev/null 2>&1 || uicache >/dev/null 2>&1
+rm -f /var/mobile/Library/Preferences/com.qoij.tunefetch.done.plist
+exit 0

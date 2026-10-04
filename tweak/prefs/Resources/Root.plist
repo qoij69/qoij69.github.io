@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Address of your PC, e.g. 192.168.1.23 (port 8080 is used automatically; add :PORT to change it), and the access code shown in the host window</string>
+			<key>label</key>
+			<string>TuneFetch Host server</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.qoij.tunefetch.reload</string>
+			<key>autoCaps</key>
+			<string>None</string>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>default</key>
+			<string></string>
+			<key>defaults</key>
+			<string>com.qoij.tunefetch</string>
+			<key>isURL</key>
+			<true/>
+			<key>key</key>
+			<string>host</string>
+			<key>keyboard</key>
+			<string>URL</string>
+			<key>label</key>
+			<string>Server</string>
+			<key>noAutoCorrect</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.qoij.tunefetch.reload</string>
+			<key>autoCaps</key>
+			<string>None</string>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>default</key>
+			<string></string>
+			<key>defaults</key>
+			<string>com.qoij.tunefetch</string>
+			<key>key</key>
+			<string>token</string>
+			<key>keyboard</key>
+			<string>Default</string>
+			<key>label</key>
+			<string>Access code</string>
+			<key>noAutoCorrect</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Sync</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.qoij.tunefetch.reload</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.qoij.tunefetch</string>
+			<key>key</key>
+			<string>enabled</string>
+			<key>label</key>
+			<string>Enable sync</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.qoij.tunefetch.reload</string>
+			<key>cell</key>
+			<string>PSLinkListCell</string>
+			<key>default</key>
+			<integer>300</integer>
+			<key>defaults</key>
+			<string>com.qoij.tunefetch</string>
+			<key>detail</key>
+			<string>PSListItemsController</string>
+			<key>key</key>
+			<string>interval</string>
+			<key>label</key>
+			<string>Check every</string>
+			<key>validTitles</key>
+			<array>
+				<string>1 minute</string>
+				<string>5 minutes</string>
+				<string>15 minutes</string>
+				<string>30 minutes</string>
+				<string>1 hour</string>
+			</array>
+			<key>validValues</key>
+			<array>
+				<integer>60</integer>
+				<integer>300</integer>
+				<integer>900</integer>
+				<integer>1800</integer>
+				<integer>3600</integer>
+			</array>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.qoij.tunefetch.reload</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.qoij.tunefetch</string>
+			<key>key</key>
+			<string>wifionly</string>
+			<key>label</key>
+			<string>Wi-Fi only</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.qoij.tunefetch.reload</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.qoij.tunefetch</string>
+			<key>key</key>
+			<string>playable</string>
+			<key>label</key>
+			<string>Only formats iOS can play</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Files already downloaded are remembered, so moving them elsewhere will not cause a re-download.</string>
+			<key>label</key>
+			<string>Save location</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.qoij.tunefetch.reload</string>
+			<key>autoCaps</key>
+			<string>None</string>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>default</key>
+			<string>/var/mobile/Media/music</string>
+			<key>defaults</key>
+			<string>com.qoij.tunefetch</string>
+			<key>key</key>
+			<string>dest</string>
+			<key>label</key>
+			<string>Folder</string>
+			<key>noAutoCorrect</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Status: no sync yet</string>
+			<key>id</key>
+			<string>statusGroup</string>
+			<key>label</key>
+			<string>Actions</string>
+		</dict>
+		<dict>
+			<key>action</key>
+			<string>testConnection</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Test connection</string>
+		</dict>
+		<dict>
+			<key>action</key>
+			<string>syncNow</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Sync now</string>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>TuneFetch</string>
+</dict>
+</plist>

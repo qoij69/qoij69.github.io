@@ -1,0 +1,6 @@
+#!/bin/sh
+PIDF=/var/mobile/Library/Caches/com.qoij.tunefetchd.pid
+launchctl unload /Library/LaunchDaemons/com.qoij.tunefetchd.plist >/dev/null 2>&1
+[ -f "$PIDF" ] && kill `cat "$PIDF"` >/dev/null 2>&1
+rm -f "$PIDF"
+exit 0
